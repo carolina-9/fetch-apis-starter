@@ -31,10 +31,10 @@ function updateCopyright(){
 //function to display the weather to the page
 function displayData(data){
 	//build image URL base
-	let imgUrlStart = "http://openweathermap.org/img/wn/";
-	let imgUrlEnd = "@2x.png";
-	let currentIcon; //TO-DO
-	let imageUrl; // TO-DO
+	// let imgUrlStart = "http://openweathermap.org/img/wn/";
+	// let imgUrlEnd = "@2x.png";
+	let currentIcon = data.current.weather[0].icon; 
+	let imageUrl = `http://openweathermap.org/img/wn/${currentIcon}@2x.png`; 
 
 	//element to display current weather
 	let current = document.getElementById("current");
@@ -43,9 +43,38 @@ function displayData(data){
 
 	//the current weather
 	//TO-DO
-
+	let currentHTML = `<h3>${data.timezone}</h3>
+						<img src ="${imageUrl}" alt ="${data.current.weather[0].description}">
+						<p><b>Current Weather: </b>${Math.round(data.current.temp)}&deg; and ${data.weather.current[0].main}</p>`;
+	
+	current.innerHTML = currentHTML;
 	//the upcoming forecast
 	// TO-DO
+
+
+	// let forecastHTML = "";
+	// for (let day of data.daily) {
+	// 	console.log(day);
+
+	// 	let iconUrl = `http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`;
+
+	// 	let ms = day.dt * 1000;
+	// 	let date = new Date(ms);
+
+	// 	forecastHTML += `<section class="day">
+
+	// 	<img src ="${iconUrl}" alt="${day.weather[0].main}">
+	// 	<h3>${date.toLocaleString("en-us", {weekday: "long"})}</h3>
+	// 	<p><b>High: ${day.temp.max}</b></p>
+	// 	<p><b>Low: ${day.temp.min}</b></p>
+	// 	<p>${day.weather[0].main}</p>
+
+	// 	</section>`;
+	// }
+
+	// forecast.innerHTML = forecastHTML;
+ 
+
 }
 
 //build URL for API call
@@ -54,7 +83,7 @@ function getWeather(location){
 	let urlStart = "https://api.openweathermap.org/data/2.5/onecall?lat=";
 	let urlParam1 = "&lon=";
 	let urlMid = "&exclude=alerts&appid=";
-	let apiKey = "";
+	let apiKey = "a15726f63f7b415988e2c41e7ec4ccee";
 	let urlEnd = "&units=imperial";
 
 	// storing the data about the user's location, used in the endpoint
@@ -62,11 +91,19 @@ function getWeather(location){
 	let longitude = location.coords.longitude;
 
 	// building our endpoint from the parts above
-	let url; // TO-DO
-
+	let url =  `${urlStart}${latitude}${urlParam1}${longitude}${urlMid}${apiKey}${urlEnd}`;
+	console.log(url)
 
 	//fetch call to API
-	// TO-DO
+	fetch(url)
+		.then(Response => Response.json())
+		.then(data => {
+			console.log(data);
+			displayData(data);
+		})
+		.catch(err => {
+			console.error(err);
+		});
 }
 
 //on page load, get geolocation
